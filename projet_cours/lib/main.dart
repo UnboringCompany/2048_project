@@ -13,6 +13,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
+      debugShowCheckedModeBanner: false, // Désactive la bannière de débogage
       home: Scaffold(
         appBar: AppBar(
           title: Text('2048 Game'),

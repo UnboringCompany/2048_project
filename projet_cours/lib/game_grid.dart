@@ -8,6 +8,7 @@ class GameGrid extends StatefulWidget {
 
 class _GameGridState extends State<GameGrid> {
   List<List<int>> grid = List.generate(4, (_) => List.generate(4, (_) => 0));
+  int score = 0;
 
   @override
   void initState() {
@@ -36,6 +37,7 @@ class _GameGridState extends State<GameGrid> {
   void move(Direction direction) {
     List<List<int>> newGrid = List.generate(4, (_) => List.generate(4, (_) => 0));
     bool moved = false;
+    int newScore = 0;
 
     switch (direction) {
       case Direction.up:
@@ -107,63 +109,115 @@ class _GameGridState extends State<GameGrid> {
     if (moved) {
       setState(() {
         grid = newGrid;
-        addRandomTile();
+        score += newScore;
+      });
+      Future.delayed(Duration(milliseconds: 300), () {
+        setState(() {
+          addRandomTile();
+        });
       });
     }
   }
 
   List<int> mergeTiles(List<int> tiles) {
     List<int> mergedTiles = [];
+    int newScore = 0;
     for (int i = 0; i < tiles.length; i++) {
       if (i + 1 < tiles.length && tiles[i] == tiles[i + 1]) {
         mergedTiles.add(tiles[i] * 2);
+        newScore += tiles[i] * 2;
         i++;
       } else {
         mergedTiles.add(tiles[i]);
       }
     }
+    score += newScore;
     return mergedTiles;
+  }
+
+  Color getTileColor(int value) {
+    switch (value) {
+      case 0:
+        return Colors.grey[300]!;
+      case 2:
+        return Colors.lightBlue[100]!;
+      case 4:
+        return Colors.lightBlue[200]!;
+      case 8:
+        return Colors.lightBlue[300]!;
+      case 16:
+        return Colors.lightBlue[400]!;
+      case 32:
+        return Colors.lightBlue[500]!;
+      case 64:
+        return Colors.lightBlue[600]!;
+      case 128:
+        return Colors.lightBlue[700]!;
+      case 256:
+        return Colors.lightBlue[800]!;
+      case 512:
+        return Colors.lightBlue[900]!;
+      case 1024:
+        return Colors.blue[900]!;
+      case 2048:
+        return Colors.blue[800]!;
+      default:
+        return Colors.blue[700]!;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onHorizontalDragEnd: (details) {
-        if (details.primaryVelocity! > 0) {
-          move(Direction.right);
-        } else {
-          move(Direction.left);
-        }
-      },
-      onVerticalDragEnd: (details) {
-        if (details.primaryVelocity! > 0) {
-          move(Direction.down);
-        } else {
-          move(Direction.up);
-        }
-      },
-      child: GridView.builder(
-        physics: NeverScrollableScrollPhysics(), // Désactive le défilement de la grille
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 4,
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            'Score: $score',
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          ),
         ),
-        itemCount: 16,
-        itemBuilder: (context, index) {
-          int row = index ~/ 4;
-          int col = index % 4;
-          int value = grid[row][col];
-          return Container(
-            margin: EdgeInsets.all(4.0),
-            color: value == 0 ? Colors.grey[300] : Colors.blue,
-            child: Center(
-              child: Text(
-                value == 0 ? '' : value.toString(),
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        Expanded(
+          child: GestureDetector(
+            onHorizontalDragEnd: (details) {
+              if (details.primaryVelocity! > 0) {
+                move(Direction.right);
+              } else {
+                move(Direction.left);
+              }
+            },
+            onVerticalDragEnd: (details) {
+              if (details.primaryVelocity! > 0) {
+                move(Direction.down);
+              } else {
+                move(Direction.up);
+              }
+            },
+            child: GridView.builder(
+              physics: NeverScrollableScrollPhysics(), // Désactive le défilement de la grille
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 4,
               ),
+              itemCount: 16,
+              itemBuilder: (context, index) {
+                int row = index ~/ 4;
+                int col = index % 4;
+                int value = grid[row][col];
+                return Container(
+                  margin: EdgeInsets.all(4.0),
+                  color: getTileColor(value),
+                  child: Center(
+                    child: Text(
+                      value == 0 ? '' : value.toString(),
+                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                );
+              },
             ),
-          );
-        },
-      ),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -174,5 +228,7 @@ enum Direction {
   left,
   right,
 }
+
+
 
 
