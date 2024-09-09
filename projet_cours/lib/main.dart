@@ -13,10 +13,19 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      debugShowCheckedModeBanner: false, // Désactive la bannière de débogage
+      debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
-          title: Text('2048 Game'),
+          title: const Text(
+            '2048',
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+          centerTitle: true,
+          backgroundColor: Colors.cyan, // Couleur de l'AppBar
         ),
         body: Center(
           child: GameGrid(),
