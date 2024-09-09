@@ -79,7 +79,7 @@ class _GameGridState extends State<GameGrid> {
     }
   }
 
-  bool _checkGameOver(List<List<int>> grid) {
+  bool _checkGameOver() {
     List<List<int>> newGrid =
         List.generate(4, (_) => List.generate(4, (_) => 0));
 
@@ -259,12 +259,12 @@ class _GameGridState extends State<GameGrid> {
         grid = newGrid;
       });
       Provider.of<ScoreModel>(context, listen: false).updateScore(newScore);
-      if (_checkGameOver(grid)) {
-        _showLoserPopup(context);
-      }
       Future.delayed(Duration(milliseconds: 200), () {
         setState(() {
           addRandomTile();
+          if (_checkGameOver()) {
+            _showLoserPopup(context);
+          }
         });
       });
     }
