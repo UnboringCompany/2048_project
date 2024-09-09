@@ -21,7 +21,45 @@ class _GameGridState extends State<GameGrid> {
   }
 
   void _playSound() async {
-    await _audioPlayer.play(AssetSource('move.mp3')); // Utilise play pour déclencher le son
+    await _audioPlayer
+        .play(AssetSource('move.mp3')); // Utilise play pour déclencher le son
+  }
+
+  void _showLoserPopup(BuildContext context) {
+    showDialog(
+        context: context,
+        barrierColor:
+            Colors.black.withOpacity(0.5), // Couleur du fond avec transparence
+        builder: (BuildContext context) {
+          return Dialog(
+            backgroundColor:
+                Colors.transparent, // Fond transparent pour la popup
+            child: Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Colors.white
+                    .withOpacity(0.9), // Fond légèrement opaque pour le contenu
+                borderRadius: BorderRadius.circular(15),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  const Text(
+                    'Vous avez perdu!',
+                    style: TextStyle(fontSize: 18),
+                  ),
+                  SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop(); // Ferme la popup
+                    },
+                    child: Text('Fermer'),
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
   }
 
   void addRandomTile() {
@@ -42,7 +80,8 @@ class _GameGridState extends State<GameGrid> {
   }
 
   void move(Direction direction) {
-    List<List<int>> newGrid = List.generate(4, (_) => List.generate(4, (_) => 0));
+    List<List<int>> newGrid =
+        List.generate(4, (_) => List.generate(4, (_) => 0));
     bool moved = false;
     int newScore = 0;
 
@@ -124,6 +163,8 @@ class _GameGridState extends State<GameGrid> {
           addRandomTile();
         });
       });
+    } else {
+      _showLoserPopup(context);
     }
   }
 
@@ -206,7 +247,8 @@ class _GameGridState extends State<GameGrid> {
               }
             },
             child: GridView.builder(
-              physics: NeverScrollableScrollPhysics(), // Désactive le défilement de la grille
+              physics:
+                  NeverScrollableScrollPhysics(), // Désactive le défilement de la grille
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 4,
               ),
@@ -221,7 +263,8 @@ class _GameGridState extends State<GameGrid> {
                   child: Center(
                     child: Text(
                       value == 0 ? '' : value.toString(),
-                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                     ),
                   ),
                 );
@@ -240,6 +283,3 @@ enum Direction {
   left,
   right,
 }
-
-
-
