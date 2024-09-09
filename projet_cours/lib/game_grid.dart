@@ -111,7 +111,7 @@ class _GameGridState extends State<GameGrid> {
         grid = newGrid;
         score += newScore;
       });
-      Future.delayed(Duration(milliseconds: 300), () {
+      Future.delayed(Duration(milliseconds: 200), () {
         setState(() {
           addRandomTile();
         });
