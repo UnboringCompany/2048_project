@@ -25,6 +25,14 @@ class _GameGridState extends State<GameGrid> {
         .play(AssetSource('move.mp3')); // Utilise play pour déclencher le son
   }
 
+  void _restart() {
+    setState(() {
+      grid = List.generate(4, (_) => List.generate(4, (_) => 0));
+      addRandomTile();
+      addRandomTile();
+    });
+  }
+
   void _showLoserPopup(BuildContext context) {
     showDialog(
         context: context,
@@ -51,6 +59,7 @@ class _GameGridState extends State<GameGrid> {
                   SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: () {
+                      _restart();
                       Navigator.of(context).pop(); // Ferme la popup
                     },
                     child: Text('Fermer'),
