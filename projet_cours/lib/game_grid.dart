@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'dart:math';
+import 'score_model.dart';
 
 class GameGrid extends StatefulWidget {
   @override
@@ -10,7 +12,6 @@ class GameGrid extends StatefulWidget {
 class _GameGridState extends State<GameGrid> {
   final AudioPlayer _audioPlayer = AudioPlayer();
   List<List<int>> grid = List.generate(4, (_) => List.generate(4, (_) => 0));
-  int score = 0;
 
   @override
   void initState() {
@@ -20,8 +21,7 @@ class _GameGridState extends State<GameGrid> {
   }
 
   void _playSound() async {
-    await _audioPlayer
-        .play(AssetSource('move.mp3')); // Utilise play pour déclencher le son
+    await _audioPlayer.play(AssetSource('move.mp3')); // Utilise play pour déclencher le son
   }
 
   void addRandomTile() {
@@ -42,8 +42,7 @@ class _GameGridState extends State<GameGrid> {
   }
 
   void move(Direction direction) {
-    List<List<int>> newGrid =
-        List.generate(4, (_) => List.generate(4, (_) => 0));
+    List<List<int>> newGrid = List.generate(4, (_) => List.generate(4, (_) => 0));
     bool moved = false;
     int newScore = 0;
 
@@ -118,8 +117,8 @@ class _GameGridState extends State<GameGrid> {
       _playSound();
       setState(() {
         grid = newGrid;
-        score += newScore;
       });
+      Provider.of<ScoreModel>(context, listen: false).updateScore(newScore);
       Future.delayed(Duration(milliseconds: 200), () {
         setState(() {
           addRandomTile();
@@ -140,7 +139,7 @@ class _GameGridState extends State<GameGrid> {
         mergedTiles.add(tiles[i]);
       }
     }
-    score += newScore;
+    Provider.of<ScoreModel>(context, listen: false).updateScore(newScore);
     return mergedTiles;
   }
 
@@ -181,9 +180,13 @@ class _GameGridState extends State<GameGrid> {
       children: [
         Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Text(
-            'Score: $score',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          child: Consumer<ScoreModel>(
+            builder: (context, scoreModel, child) {
+              return Text(
+                'Score: ${scoreModel.score}',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              );
+            },
           ),
         ),
         Expanded(
@@ -203,8 +206,7 @@ class _GameGridState extends State<GameGrid> {
               }
             },
             child: GridView.builder(
-              physics:
-                  NeverScrollableScrollPhysics(), // Désactive le défilement de la grille
+              physics: NeverScrollableScrollPhysics(), // Désactive le défilement de la grille
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 4,
               ),
@@ -219,8 +221,7 @@ class _GameGridState extends State<GameGrid> {
                   child: Center(
                     child: Text(
                       value == 0 ? '' : value.toString(),
-                      style:
-                          TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                     ),
                   ),
                 );
@@ -239,3 +240,6 @@ enum Direction {
   left,
   right,
 }
+
+
+
