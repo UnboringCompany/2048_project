@@ -79,6 +79,107 @@ class _GameGridState extends State<GameGrid> {
     }
   }
 
+  bool _checkGameOver() {
+    List<List<int>> newGrid =
+        List.generate(4, (_) => List.generate(4, (_) => 0));
+
+    // case up
+    for (int col = 0; col < 4; col++) {
+      List<int> column = [];
+      for (int row = 0; row < 4; row++) {
+        if (grid[row][col] != 0) {
+          column.add(grid[row][col]);
+        }
+      }
+      column = mergeTiles(column);
+      for (int row = 0; row < column.length; row++) {
+        newGrid[row][col] = column[row];
+      }
+    }
+
+    for (int i = 0; i < 4; i++) {
+      for (int j = 0; j < 4; j++) {
+        if (grid[i][j] != newGrid[i][j]) {
+          return false;
+        }
+      }
+    }
+
+    // case down
+    newGrid = List.generate(4, (_) => List.generate(4, (_) => 0));
+
+    for (int col = 0; col < 4; col++) {
+      List<int> column = [];
+      for (int row = 3; row >= 0; row--) {
+        if (grid[row][col] != 0) {
+          column.add(grid[row][col]);
+        }
+      }
+      column = mergeTiles(column);
+      for (int row = 0; row < column.length; row++) {
+        newGrid[3 - row][col] = column[row];
+      }
+    }
+
+    for (int i = 0; i < 4; i++) {
+      for (int j = 0; j < 4; j++) {
+        if (grid[i][j] != newGrid[i][j]) {
+          return false;
+        }
+      }
+    }
+
+    // case left
+    newGrid = List.generate(4, (_) => List.generate(4, (_) => 0));
+
+    for (int row = 0; row < 4; row++) {
+      List<int> rowList = [];
+      for (int col = 0; col < 4; col++) {
+        if (grid[row][col] != 0) {
+          rowList.add(grid[row][col]);
+        }
+      }
+      rowList = mergeTiles(rowList);
+      for (int col = 0; col < rowList.length; col++) {
+        newGrid[row][col] = rowList[col];
+      }
+    }
+
+    for (int i = 0; i < 4; i++) {
+      for (int j = 0; j < 4; j++) {
+        if (grid[i][j] != newGrid[i][j]) {
+          return false;
+        }
+      }
+    }
+
+    // case right
+    newGrid = List.generate(4, (_) => List.generate(4, (_) => 0));
+
+    for (int row = 0; row < 4; row++) {
+      List<int> rowList = [];
+      for (int col = 3; col >= 0; col--) {
+        if (grid[row][col] != 0) {
+          rowList.add(grid[row][col]);
+        }
+      }
+      rowList = mergeTiles(rowList);
+      for (int col = 0; col < rowList.length; col++) {
+        newGrid[row][3 - col] = rowList[col];
+      }
+    }
+
+    for (int i = 0; i < 4; i++) {
+      for (int j = 0; j < 4; j++) {
+        if (grid[i][j] != newGrid[i][j]) {
+          return false;
+        }
+      }
+    }
+
+    return true;
+  }
+
   void move(Direction direction) {
     List<List<int>> newGrid =
         List.generate(4, (_) => List.generate(4, (_) => 0));
@@ -158,13 +259,14 @@ class _GameGridState extends State<GameGrid> {
         grid = newGrid;
       });
       Provider.of<ScoreModel>(context, listen: false).updateScore(newScore);
+      if (_checkGameOver()) {
+        _showLoserPopup(context);
+      }
       Future.delayed(Duration(milliseconds: 200), () {
         setState(() {
           addRandomTile();
         });
       });
-    } else {
-      _showLoserPopup(context);
     }
   }
 
