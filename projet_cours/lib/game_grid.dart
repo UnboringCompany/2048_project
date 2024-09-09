@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'dart:math';
 
 class GameGrid extends StatefulWidget {
@@ -7,6 +8,7 @@ class GameGrid extends StatefulWidget {
 }
 
 class _GameGridState extends State<GameGrid> {
+  final AudioPlayer _audioPlayer = AudioPlayer();
   List<List<int>> grid = List.generate(4, (_) => List.generate(4, (_) => 0));
   int score = 0;
 
@@ -15,6 +17,11 @@ class _GameGridState extends State<GameGrid> {
     super.initState();
     addRandomTile();
     addRandomTile();
+  }
+
+  void _playSound() async {
+    await _audioPlayer
+        .play(AssetSource('move.mp3')); // Utilise play pour déclencher le son
   }
 
   void addRandomTile() {
@@ -35,7 +42,8 @@ class _GameGridState extends State<GameGrid> {
   }
 
   void move(Direction direction) {
-    List<List<int>> newGrid = List.generate(4, (_) => List.generate(4, (_) => 0));
+    List<List<int>> newGrid =
+        List.generate(4, (_) => List.generate(4, (_) => 0));
     bool moved = false;
     int newScore = 0;
 
@@ -107,6 +115,7 @@ class _GameGridState extends State<GameGrid> {
     }
 
     if (moved) {
+      _playSound();
       setState(() {
         grid = newGrid;
         score += newScore;
@@ -194,7 +203,8 @@ class _GameGridState extends State<GameGrid> {
               }
             },
             child: GridView.builder(
-              physics: NeverScrollableScrollPhysics(), // Désactive le défilement de la grille
+              physics:
+                  NeverScrollableScrollPhysics(), // Désactive le défilement de la grille
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 4,
               ),
@@ -209,7 +219,8 @@ class _GameGridState extends State<GameGrid> {
                   child: Center(
                     child: Text(
                       value == 0 ? '' : value.toString(),
-                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                     ),
                   ),
                 );
@@ -228,7 +239,3 @@ enum Direction {
   left,
   right,
 }
-
-
-
-
