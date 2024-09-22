@@ -329,7 +329,10 @@ class _GameGridState extends State<GameGrid> {
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
+        // Score affiché
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Consumer<ScoreModel>(
@@ -341,7 +344,10 @@ class _GameGridState extends State<GameGrid> {
             },
           ),
         ),
-        Expanded(
+        SizedBox(height: 20),
+        // Grille de jeu
+        Container(
+          height: 400,
           child: GestureDetector(
             onHorizontalDragEnd: (details) {
               if (details.primaryVelocity! > 0) {
@@ -358,8 +364,7 @@ class _GameGridState extends State<GameGrid> {
               }
             },
             child: GridView.builder(
-              physics:
-                  NeverScrollableScrollPhysics(), // Désactive le défilement de la grille
+              physics: NeverScrollableScrollPhysics(),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 4,
               ),
@@ -381,6 +386,15 @@ class _GameGridState extends State<GameGrid> {
                 );
               },
             ),
+          ),
+        ),
+        SizedBox(height: 20),
+        // Bouton de restart
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: ElevatedButton(
+            onPressed: _restart,
+            child: Text('Recommencer'),
           ),
         ),
       ],
