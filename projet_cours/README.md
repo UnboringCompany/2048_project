@@ -27,7 +27,7 @@ Pour exécuter ce projet localement, il faut avoir installé Flutter sur sa mach
 
 2. Navigue dans le dossier du projet :
    ```bash
-   cd 2048_project
+   cd 2048_project/projet_cours
    ```
 
 3. Installe les dépendances nécessaires :
